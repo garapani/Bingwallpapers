@@ -1,0 +1,175 @@
+﻿<phone:PhoneApplicationPage
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+    xmlns:delayImage="clr-namespace:Krempel.WP7.Core.Controls;assembly=Krempel.WP7.Core"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:nokiaKit="clr-namespace:RateMyApp.Controls;assembly=RateMyApp"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:AppBarUtils="clr-namespace:AppBarUtils;assembly=AppBarUtils"
+    xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WP8"
+    xmlns:usercontrol="clr-namespace:BingWallpapers.Controls"
+    xmlns:converters="clr-namespace:BingWallpapers.Converters"
+    xmlns:UI="clr-namespace:Microsoft.Advertising.Mobile.UI;assembly=Microsoft.Advertising.Mobile.UI"
+    xmlns:adduplex="clr-namespace:AdDuplex;assembly=AdDuplex.WindowsPhone"
+    xmlns:WindowsPhone8="clr-namespace:Microsoft.AdMediator.WindowsPhone8;assembly=Microsoft.AdMediator.WindowsPhone8"
+    x:Class="BingWallpaper.MainPage"
+    mc:Ignorable="d"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    shell:SystemTray.IsVisible="false"
+    >
+    <phone:PhoneApplicationPage.Resources>
+        <converters:BooleanToCollapseConverter x:Key="booleanToCollapse"/>
+
+        <Style x:Key="listItemsStyle"
+           TargetType="TextBlock">
+            <Setter Property="FontSize"
+        		Value="{StaticResource PhoneFontSizeLarge}" />
+            <Setter Property="Foreground" Value="BlanchedAlmond"/>
+        </Style>
+
+    </phone:PhoneApplicationPage.Resources>
+
+    <phone:PhoneApplicationPage.FontFamily>
+        <StaticResource ResourceKey="PhoneFontFamilyNormal"/>
+    </phone:PhoneApplicationPage.FontFamily>
+    <phone:PhoneApplicationPage.FontSize>
+        <StaticResource ResourceKey="PhoneFontSizeNormal"/>
+    </phone:PhoneApplicationPage.FontSize>
+    <phone:PhoneApplicationPage.Foreground>
+        <StaticResource ResourceKey="PhoneForegroundBrush"/>
+    </phone:PhoneApplicationPage.Foreground>
+    <phone:PhoneApplicationPage.DataContext>
+        <Binding Path="MainViewModel" Source="{StaticResource Locator}"/>
+    </phone:PhoneApplicationPage.DataContext>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedMainPageCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+
+        <shell:ApplicationBar IsMenuEnabled="True"
+                          IsVisible="True"
+                          Mode="Minimized"
+                          Opacity="1"
+                          BackgroundColor="SaddleBrown" ForegroundColor="BlanchedAlmond">
+            <shell:ApplicationBar.MenuItems>
+
+                <shell:ApplicationBarMenuItem Text="settings" />
+                <shell:ApplicationBarMenuItem Text="about" />
+            </shell:ApplicationBar.MenuItems>
+
+        </shell:ApplicationBar>
+
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+    <i:Interaction.Behaviors>
+
+        <AppBarUtils:AppBarItemCommand Command="{Binding ShowSettingsCommand}"
+                                   Id="settings"
+                                   Type="MenuItem" />
+
+        <AppBarUtils:AppBarItemCommand Command="{Binding ShowRateTheAppCommand}"
+                                   Id="rate the app"
+                                   Type="MenuItem" />
+
+        <AppBarUtils:AppBarItemCommand Command="{Binding ShowShareTheAppCommand}"
+                                   Id="share the app"
+                                   Type="MenuItem" />
+
+        <AppBarUtils:AppBarItemCommand Command="{Binding ShowAboutCommand}"
+                                   Id="about"
+                                   Type="MenuItem" />
+    </i:Interaction.Behaviors>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+            <ImageBrush ImageSource="/assets/ApplicationBackgroundImage.jpg"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Daily Wallpapers" FontSize="{StaticResource PhoneFontSizeSmall}" Foreground="BlanchedAlmond"/>
+        <phone:Pivot Grid.Row="1" >
+            <phone:PivotItem Foreground="BlanchedAlmond">
+                <phone:PivotItem.Header>
+                    <Grid>
+                        <TextBlock Text="wallpapers" Foreground="BlanchedAlmond" FontSize="{StaticResource PhoneFontSizeExtraLarge}"/>
+                    </Grid>
+                </phone:PivotItem.Header>
+                <Grid x:Name="ContentPanel" Margin="2" ShowGridLines="false">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1"/>
+                    </Grid.ColumnDefinitions>
+                    <usercontrol:LongListSelector  Grid.Column="1" x:Name="longlist" ItemsSource="{Binding Images}" GridCellSize="210,400"  LayoutMode="Grid" SelectedItem="{Binding SelectedImage, Mode=TwoWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Tap">
+                                <i:InvokeCommandAction Command="{Binding ReadSelectedImageCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <usercontrol:LongListSelector.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="400" Width="210" toolkit:TiltEffect.IsTiltEnabled="True">
+                                    <Image Source="{Binding url}" Width="205" HorizontalAlignment="Center" VerticalAlignment="Center" Height="390" Stretch="Fill"/>
+                                </Grid>
+                            </DataTemplate>
+                        </usercontrol:LongListSelector.ItemTemplate>
+                    </usercontrol:LongListSelector>
+                    <StackPanel Grid.Row="1" x:Name="mainWallpaperStackPanel" Grid.Column="1" VerticalAlignment="Bottom" >
+                        <WindowsPhone8:AdMediatorControl x:Name="AdMediator_0C2176" Grid.Column="1" HorizontalAlignment="Center" Height="50" Id="AdMediator-Id-5C7B1A19-C29F-4365-A658-E1DE0D9BB110" Grid.Row="1" VerticalAlignment="Bottom" Width="320"/>
+                    </StackPanel>
+                </Grid>
+            </phone:PivotItem>
+            <phone:PivotItem>
+                <phone:PivotItem.Header>
+                    <Grid>
+                        <TextBlock Text="regions" Foreground="BlanchedAlmond" FontSize="{StaticResource PhoneFontSizeExtraLarge}"/>
+                    </Grid>
+                </phone:PivotItem.Header>
+                <Grid ShowGridLines="false" Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5"/>
+                    </Grid.ColumnDefinitions>
+                    <usercontrol:LongListSelector Grid.Column="1" ItemsSource="{Binding ListOfRegionData}" SelectedItem="{Binding UserSelectedRegion, Mode=TwoWay}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Tap">
+                                <i:InvokeCommandAction Command="{Binding ReadSelectedRegion}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <usercontrol:LongListSelector.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RegionName}" Style="{StaticResource listItemsStyle}" Margin="3"/>
+                            </DataTemplate>
+                        </usercontrol:LongListSelector.ItemTemplate>
+                    </usercontrol:LongListSelector>
+                    <StackPanel Grid.Row="1" Grid.Column="1" x:Name="mainRegionStackPanel">
+                        <!--<WindowsPhone8:AdMediatorControl x:Name="AdMediator1_B65F17" Height="50" Id="AdMediator-Id-4C8D2841-CAE1-46F6-8655-C81829729951" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-20" Width="320"/>-->
+                    </StackPanel>
+                </Grid>
+            </phone:PivotItem>
+        </phone:Pivot>
+        <nokiaKit:FeedbackOverlay x:Name="FeedbackOverlay"
+			nokiaKit:FeedbackOverlay.FeedbackTo="venkatachalapathi.g@outlook.com"
+			nokiaKit:FeedbackOverlay.ApplicationName="Daily Wallpapers"
+			nokiaKit:FeedbackOverlay.CompanyName="The Village Software"/>
+    </Grid>
+</phone:PhoneApplicationPage>
